@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="bg">#08121F</color>
+    <color name="accent">#6DB4FF</color>
+    <bool name="light_bars">false</bool>
+</resources>

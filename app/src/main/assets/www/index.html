@@ -1,0 +1,1081 @@
+<!doctype html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover,user-scalable=no">
+<title>UrlaubsCast</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Outfit:wght@500;600;700&family=Inter:wght@400;500;600&display=swap">
+<style>
+/* Blaues Glas-Design – gleiche Farben und 3D-Knöpfe wie die Mail-App */
+:root{
+  --bg:#dde8f4; --blob1:#a6cdf7; --blob2:#f3c58e; --blob3:#b9d3f0;
+  --glass:rgba(255,255,255,.52); --glass-strong:rgba(255,255,255,.8);
+  --hi:rgba(255,255,255,.9); --lo:rgba(20,50,90,.10); --line:rgba(255,255,255,.75);
+  --fg:#13233a; --muted:#56687f; --accent:#2f86e6; --accent-fg:#ffffff; --accent2:#c9711b;
+  --danger:#bf3d36; --warn-bg:rgba(217,130,43,.16); --sel:rgba(47,134,230,.14); --shadow:rgba(18,40,75,.18);
+  --btn-top:rgba(255,255,255,.98); --btn-bot:rgba(214,227,244,.94); --btn-rim:rgba(16,44,88,.22); --btn-edge:#ffffff;
+  --gloss:rgba(255,255,255,.85); --gloss2:rgba(255,255,255,.2); --accent-hi:#5aa6f5;
+  --card-bg:linear-gradient(180deg,rgba(255,255,255,.9),rgba(255,255,255,.7)); --card-line:rgba(255,255,255,.75);
+  --card-sh:0 1px 2px rgba(20,45,90,.06),0 8px 18px -10px rgba(20,45,90,.28);
+  --ok:#2e9e5b; --sw-off:rgba(16,58,68,.18); --stage:#0b1626;
+  --font-display:"Outfit",ui-sans-serif,system-ui,sans-serif;
+  --font-body:"Inter",ui-sans-serif,system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;
+  color-scheme:light;
+}
+@media (prefers-color-scheme:dark){:root{
+  --bg:#08121f; --blob1:#13427a; --blob2:#6b4318; --blob3:#173e5c;
+  --glass:rgba(24,38,58,.55); --glass-strong:rgba(30,46,70,.88);
+  --hi:rgba(255,255,255,.12); --lo:rgba(0,0,0,.35); --line:rgba(255,255,255,.12);
+  --fg:#e3ecf6; --muted:#90a4bd; --accent:#6db4ff; --accent-fg:#06182e; --accent2:#f0a454;
+  --danger:#ff7b72; --warn-bg:rgba(240,164,84,.14); --sel:rgba(109,180,255,.16); --shadow:rgba(0,0,0,.45);
+  --btn-top:rgba(96,126,168,.6); --btn-bot:rgba(22,36,58,.96); --btn-rim:rgba(0,0,0,.6); --btn-edge:rgba(255,255,255,.3);
+  --gloss:rgba(255,255,255,.18); --gloss2:rgba(255,255,255,.03); --accent-hi:#9ccbff;
+  --card-bg:linear-gradient(180deg,rgba(52,74,106,.62),rgba(34,52,78,.55)); --card-line:rgba(255,255,255,.07);
+  --card-sh:0 1px 2px rgba(0,0,0,.25),0 10px 20px -10px rgba(0,0,0,.6);
+  --ok:#5fd394; --sw-off:rgba(255,255,255,.16); color-scheme:dark}}
+
+*{box-sizing:border-box}
+html,body{height:100%;margin:0}
+body{background:var(--bg);color:var(--fg);font-family:var(--font-body);font-size:15px;overflow:hidden;
+  -webkit-tap-highlight-color:transparent;-webkit-user-select:none;user-select:none;-webkit-touch-callout:none}
+body::after{content:"";position:fixed;inset:0;z-index:-1;pointer-events:none;
+  background:radial-gradient(40vmax 40vmax at 8% 10%,var(--blob1),transparent 60%),
+             radial-gradient(35vmax 35vmax at 95% 90%,var(--blob2),transparent 60%),
+             radial-gradient(45vmax 45vmax at 70% 5%,var(--blob3),transparent 60%);opacity:.75}
+[hidden]{display:none!important}
+button,input,select{font:inherit;color:inherit}
+button{cursor:pointer}
+button:disabled{opacity:.45;cursor:default}
+:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+svg.i{width:20px;height:20px;flex:none}
+
+.app{position:fixed;inset:0;display:flex;flex-direction:column;gap:10px;
+  padding:calc(10px + env(safe-area-inset-top,0px)) 10px calc(10px + env(safe-area-inset-bottom,0px))}
+.pane{border-radius:22px;background:var(--glass);border:1px solid var(--line);
+  backdrop-filter:blur(20px) saturate(1.5);-webkit-backdrop-filter:blur(20px) saturate(1.5);
+  box-shadow:inset 0 1px 0 var(--hi),inset 0 -2px 0 var(--lo),0 18px 40px -12px var(--shadow)}
+
+/* ===== 3D-Glasknöpfe ===== */
+.btn,.mini,.gsel{border:1px solid var(--btn-rim);color:var(--fg);
+  background:linear-gradient(180deg,var(--gloss) 0%,var(--gloss2) 48%,transparent 52%),linear-gradient(180deg,var(--btn-top),var(--btn-bot));
+  box-shadow:inset 0 1px 0 var(--btn-edge),inset 0 -2px 3px rgba(0,0,0,.08),0 2px 0 var(--btn-rim),0 7px 14px -6px var(--shadow);
+  transition:transform .1s,box-shadow .1s}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:7px;border-radius:13px;padding:10px 14px;white-space:nowrap;font-weight:500}
+.btn:active:not(:disabled),.mini:active:not(:disabled),.gsel:active{transform:translateY(2px);box-shadow:inset 0 1px 0 var(--btn-edge),inset 0 2px 4px rgba(0,0,0,.12),0 0 0 var(--btn-rim)}
+.btn.primary{color:var(--accent-fg);border-color:rgba(0,0,0,.2);
+  background:linear-gradient(180deg,rgba(255,255,255,.45) 0%,rgba(255,255,255,.1) 48%,transparent 52%),linear-gradient(180deg,var(--accent-hi),var(--accent));
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.55),inset 0 -3px 0 rgba(0,0,0,.18),0 2px 0 rgba(0,0,0,.2),0 8px 16px -6px var(--shadow)}
+.btn.danger{color:var(--danger)}
+.btn.icon{width:42px;height:42px;padding:0;border-radius:14px}
+.btn.sm{padding:7px 11px;font-size:14px;border-radius:11px;gap:5px}
+.btn.sm svg.i{width:17px;height:17px}
+.btn.wide{width:100%;margin-top:8px}
+.btn.round{width:54px;height:54px;padding:0;border-radius:50%}
+.btn.round.big{width:74px;height:74px}
+.btn.round.big svg.i{width:30px;height:30px}
+.mini{display:inline-grid;place-items:center;border-radius:10px;width:34px;height:34px;padding:0;color:var(--muted)}
+.mini svg.i{width:17px;height:17px}
+.gsel{border-radius:12px;padding:9px 34px 9px 12px;-webkit-appearance:none;appearance:none;min-width:0;font-size:14px;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%2356687f' stroke-width='2.4' stroke-linecap='round'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E"),linear-gradient(180deg,var(--gloss) 0%,var(--gloss2) 48%,transparent 52%),linear-gradient(180deg,var(--btn-top),var(--btn-bot));
+  background-repeat:no-repeat;background-position:right 10px center,0 0,0 0;background-size:16px,auto,auto}
+.seg{display:flex;gap:4px;padding:4px;border-radius:14px;background:var(--sel);box-shadow:inset 0 2px 4px var(--lo)}
+.seg button{flex:1;min-width:0;border:1px solid transparent;background:none;padding:8px 6px;border-radius:11px;font-size:14px;white-space:nowrap;color:var(--fg)}
+.seg button.on{font-weight:600;color:var(--accent);border-color:var(--btn-rim);
+  background:linear-gradient(180deg,var(--gloss) 0%,var(--gloss2) 48%,transparent 52%),linear-gradient(180deg,var(--btn-top),var(--btn-bot));
+  box-shadow:inset 0 1px 0 var(--btn-edge),0 2px 0 var(--btn-rim),0 6px 12px -6px var(--shadow)}
+
+/* ===== Kopfzeile ===== */
+.top{display:flex;align-items:center;gap:8px;padding:9px 9px 9px 11px}
+.logo{width:42px;height:42px;border-radius:14px;flex:none;display:grid;place-items:center;color:#fff;
+  background:radial-gradient(70% 50% at 35% 20%,rgba(255,255,255,.45),transparent 70%),linear-gradient(135deg,#62b0ff,#1f5fe0 55%,#0e2a86);
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.5),inset 0 -3px 0 rgba(0,0,0,.18),0 8px 16px -8px rgba(14,42,134,.6)}
+.logo svg.i{width:23px;height:23px}
+.ttl{flex:1;min-width:0}
+.ttl h1{font-family:var(--font-display);font-size:20px;line-height:1.1;margin:0;font-weight:600;letter-spacing:-.01em}
+.status{display:flex;align-items:center;gap:6px;font-size:12.5px;color:var(--muted);margin-top:3px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.status span{overflow:hidden;text-overflow:ellipsis}
+.dot{width:9px;height:9px;border-radius:50%;flex:none;background:#9aa8b8;box-shadow:inset 0 -2px 2px rgba(0,0,0,.2),0 0 0 2px var(--glass-strong)}
+.dot.on{background:var(--ok)}
+.dot.connecting{background:var(--accent2);animation:pulse 1s ease-in-out infinite}
+@keyframes pulse{50%{opacity:.35}}
+#bCast.on{color:var(--accent);border-color:var(--accent);box-shadow:inset 0 1px 0 var(--btn-edge),0 0 0 1px var(--accent),0 7px 14px -6px var(--shadow)}
+
+/* ===== Inhalt ===== */
+main{flex:1;min-height:0;position:relative;overflow:hidden;padding:0}
+.tab{position:absolute;inset:0;overflow-y:auto;overscroll-behavior:contain;padding:12px 10px 16px;-webkit-overflow-scrolling:touch}
+.hint{font-size:12.5px;color:var(--muted);margin:8px 4px 4px;line-height:1.45}
+.hint.small{font-size:12px}
+.note{font-size:13px;line-height:1.45;padding:9px 12px;border-radius:12px;background:var(--warn-bg);margin:0 0 10px}
+.note.info{background:var(--sel)}
+h2{font-family:var(--font-display);font-weight:600;font-size:18px;margin:0}
+h3{font-family:var(--font-display);font-weight:600;font-size:18px;margin:0;display:flex;align-items:center;gap:8px}
+
+/* Galerie */
+.tools{display:flex;flex-direction:column;gap:8px;margin-bottom:4px}
+.tools .row{display:flex;gap:8px}
+.tools .row .gsel{flex:1}
+.day{margin:12px 0 4px}
+.day-h{position:sticky;top:-12px;z-index:2;display:flex;align-items:center;gap:10px;padding:8px 8px 8px 10px;margin:0 -2px 8px;border-radius:14px;
+  background:var(--glass-strong);border:1px solid var(--line);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);box-shadow:inset 0 1px 0 var(--hi),0 6px 14px -10px var(--shadow)}
+.day-h div{flex:1;min-width:0;display:flex;flex-direction:column}
+.day-h b{font-family:var(--font-display);font-weight:600;font-size:15px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.day-h span{font-size:12px;color:var(--muted)}
+.thumbs{display:grid;grid-template-columns:repeat(auto-fill,minmax(98px,1fr));gap:5px}
+.th{position:relative;aspect-ratio:1;border-radius:12px;overflow:hidden;border:0;padding:0;background:var(--sel);display:block;width:100%;
+  box-shadow:0 1px 2px rgba(0,0,0,.12);touch-action:manipulation}
+.th img{width:100%;height:100%;object-fit:cover;display:block;transition:transform .15s,border-radius .15s;pointer-events:none}
+.th img.broken{opacity:0}
+.th .vb{position:absolute;left:5px;bottom:5px;display:flex;align-items:center;gap:3px;font-size:11px;font-weight:600;color:#fff;
+  background:rgba(0,0,0,.5);padding:2px 7px 2px 5px;border-radius:99px;pointer-events:none}
+.th .vb svg.i{width:11px;height:11px}
+.th .ck{position:absolute;right:6px;top:6px;width:24px;height:24px;border-radius:50%;border:2px solid #fff;background:rgba(0,0,0,.25);
+  display:none;place-items:center;color:#fff;box-shadow:0 1px 3px rgba(0,0,0,.4);pointer-events:none}
+.th .ck svg.i{width:14px;height:14px;opacity:0}
+.selmode .th .ck{display:grid}
+.th.sel .ck{background:var(--accent);border-color:#fff}
+.th.sel .ck svg.i{opacity:1}
+.th.sel img{transform:scale(.86);border-radius:10px}
+.th.inl::before{content:"";position:absolute;right:6px;bottom:6px;width:10px;height:10px;border-radius:50%;z-index:1;
+  background:var(--accent);box-shadow:0 0 0 2px #fff,0 1px 3px rgba(0,0,0,.4)}
+.th.live{box-shadow:0 0 0 3px var(--accent),0 6px 14px -4px var(--accent)}
+.th.live::after{content:"TV";position:absolute;left:6px;top:6px;font-size:10px;font-weight:700;color:#fff;background:var(--accent);padding:2px 6px;border-radius:99px;letter-spacing:.04em}
+.empty{text-align:center;color:var(--muted);padding:40px 16px;line-height:1.5}
+.empty svg.i{width:44px;height:44px;opacity:.6;margin-bottom:8px}
+.spin{display:block;width:24px;height:24px;border-radius:50%;border:3px solid var(--sel);border-top-color:var(--accent);animation:sp .8s linear infinite;margin:30px auto}
+@keyframes sp{to{transform:rotate(360deg)}}
+
+/* Diashow */
+.now{padding:12px;margin-bottom:14px}
+.stage{position:relative;aspect-ratio:16/9;border-radius:16px;overflow:hidden;background:var(--stage);
+  box-shadow:inset 0 0 0 1px rgba(255,255,255,.08),0 10px 24px -12px rgba(0,0,0,.6)}
+.stage .blur{position:absolute;inset:-20px;width:calc(100% + 40px);height:calc(100% + 40px);object-fit:cover;filter:blur(18px) saturate(1.3);opacity:.55}
+.stage .pic{position:absolute;inset:0;width:100%;height:100%;object-fit:contain}
+.stage .gloss{position:absolute;inset:0;pointer-events:none;background:linear-gradient(160deg,rgba(255,255,255,.18),transparent 40%)}
+.stage-empty{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;color:rgba(255,255,255,.7);font-size:14px;text-align:center;padding:12px}
+.stage-empty svg.i{width:40px;height:40px;opacity:.7}
+.pill{position:absolute;top:10px;font-size:12px;font-weight:600;color:#fff;background:rgba(0,0,0,.45);padding:4px 10px;border-radius:99px;
+  backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);border:1px solid rgba(255,255,255,.18)}
+.pill.l{left:10px}.pill.r{right:10px}
+.pill.live{background:var(--accent);color:var(--accent-fg)}
+.prog{height:7px;border-radius:99px;background:var(--sel);overflow:hidden;margin:12px 2px 0;box-shadow:inset 0 1px 2px var(--lo)}
+.prog i{display:block;height:100%;width:0;border-radius:99px;background:linear-gradient(90deg,var(--accent-hi),var(--accent));transition:width .25s linear}
+.now-info{display:flex;flex-direction:column;gap:2px;margin:10px 4px 0;min-width:0}
+.now-info b{font-family:var(--font-display);font-weight:600;font-size:16px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.now-info span{font-size:13px;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.msg{margin:10px 0 0}
+.controls{display:flex;justify-content:center;align-items:center;gap:14px;margin:16px 0 8px}
+.quick{margin-top:8px;padding:12px;border-radius:16px;background:var(--sel);box-shadow:inset 0 2px 4px var(--lo);display:flex;flex-direction:column;gap:10px}
+.fld{display:flex;flex-direction:column;gap:4px;font-size:14px}
+.fld .lab{display:flex;justify-content:space-between;align-items:center}
+.fld .lab b{color:var(--accent);font-variant-numeric:tabular-nums}
+.row2{display:flex;gap:10px;align-items:center;flex-wrap:wrap;justify-content:space-between}
+input[type=range]{-webkit-appearance:none;appearance:none;width:100%;height:30px;background:transparent;margin:0}
+input[type=range]::-webkit-slider-runnable-track{height:8px;border-radius:99px;box-shadow:inset 0 1px 2px var(--lo);
+  background:linear-gradient(90deg,var(--accent) 0 var(--p,30%),var(--glass-strong) var(--p,30%) 100%)}
+input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:28px;height:28px;border-radius:50%;margin-top:-10px;border:1px solid var(--btn-rim);
+  background:linear-gradient(180deg,var(--gloss) 0%,var(--gloss2) 48%,transparent 52%),linear-gradient(180deg,var(--btn-top),var(--btn-bot));
+  box-shadow:inset 0 1px 0 var(--btn-edge),0 2px 0 var(--btn-rim),0 6px 12px -6px var(--shadow)}
+input[type=range]::-moz-range-track{height:8px;border-radius:99px;background:var(--glass-strong)}
+input[type=range]::-moz-range-progress{height:8px;border-radius:99px;background:var(--accent)}
+input[type=range]::-moz-range-thumb{width:26px;height:26px;border-radius:50%;border:1px solid var(--btn-rim);background:var(--btn-top)}
+.sw{display:flex;align-items:center;gap:10px;font-size:14px;cursor:pointer;position:relative}
+.sw input{position:absolute;opacity:0;pointer-events:none}
+.sw i{width:46px;height:28px;border-radius:99px;background:var(--sw-off);position:relative;flex:none;box-shadow:inset 0 2px 4px var(--lo);transition:background .2s}
+.sw i::after{content:"";position:absolute;top:3px;left:3px;width:22px;height:22px;border-radius:50%;background:linear-gradient(180deg,#fff,#e4ecf6);box-shadow:0 2px 4px rgba(0,0,0,.25);transition:transform .2s}
+.sw input:checked+i{background:var(--accent)}
+.sw input:checked+i::after{transform:translateX(18px)}
+.list-head{display:flex;align-items:center;gap:8px;margin:4px 2px 10px;flex-wrap:wrap}
+.list-head h2{flex:1;min-width:120px}
+.list-head h2 small{display:block;font-family:var(--font-body);font-weight:400;font-size:12.5px;color:var(--muted);margin-top:2px}
+.acts{display:flex;gap:6px}
+.ri{display:grid;grid-template-columns:22px 54px minmax(0,1fr) auto;gap:9px;align-items:center;padding:7px 7px 7px 6px;border-radius:15px;margin-bottom:7px;
+  background:var(--card-bg);border:1px solid var(--card-line);box-shadow:inset 0 1px 0 var(--hi),var(--card-sh)}
+.ri.cur{box-shadow:inset 0 1px 0 var(--hi),0 0 0 2px var(--accent),var(--card-sh)}
+.ri .num{font-size:12px;color:var(--muted);text-align:center;font-variant-numeric:tabular-nums}
+.ri.cur .num{color:var(--accent);font-weight:700}
+.ri .tw{position:relative;width:54px;height:54px}
+.ri img{width:54px;height:54px;border-radius:11px;object-fit:cover;display:block;background:var(--sel)}
+.ri .tw .vb{position:absolute;left:3px;bottom:3px;font-size:10px;font-weight:600;color:#fff;background:rgba(0,0,0,.55);padding:1px 5px;border-radius:99px}
+.ri-t{min-width:0;display:flex;flex-direction:column;gap:2px}
+.ri-t b{font-weight:600;font-size:14px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.ri-t span{font-size:12.5px;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.ri-a{display:flex;gap:4px}
+.ri-a .mini{width:32px;height:32px}
+
+/* Abläufe */
+.intro{padding:14px;margin-bottom:14px}
+.intro p{margin:0 0 10px;font-size:14px;line-height:1.5;color:var(--muted)}
+.showcard{display:grid;grid-template-columns:76px minmax(0,1fr);gap:12px;align-items:center;padding:10px;border-radius:18px;margin-bottom:10px;
+  background:var(--card-bg);border:1px solid var(--card-line);box-shadow:inset 0 1px 0 var(--hi),var(--card-sh)}
+.mosaic{width:76px;height:76px;border-radius:14px;overflow:hidden;display:grid;grid-template-columns:1fr 1fr;grid-template-rows:1fr 1fr;gap:2px;background:var(--sel)}
+.mosaic img{width:100%;height:100%;object-fit:cover;display:block}
+.mosaic.one{grid-template-columns:1fr;grid-template-rows:1fr}
+.sc-t{min-width:0;display:flex;flex-direction:column;gap:3px}
+.sc-t b{font-family:var(--font-display);font-weight:600;font-size:16px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.sc-t span{font-size:12.5px;color:var(--muted)}
+.sc-a{grid-column:1/-1;display:flex;gap:6px}
+.sc-a .btn{flex:1}
+
+/* Mini-Player & Auswahlleiste */
+.dock{padding:8px;display:flex;align-items:center;gap:8px}
+.dock img{width:46px;height:46px;border-radius:12px;object-fit:cover;flex:none;background:var(--stage)}
+.dock .mp-t{flex:1;min-width:0;display:flex;flex-direction:column;gap:3px}
+.dock .mp-t b{font-size:14px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.dock .mp-t span{font-size:12px;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.dock .prog{margin:2px 0 0;height:4px}
+.selbar{padding:10px;display:flex;flex-direction:column;gap:8px}
+.selbar .sb-h{display:flex;align-items:center;gap:8px}
+.selbar .sb-h b{flex:1;font-family:var(--font-display);font-weight:600;font-size:16px}
+.selbar .sb-a{display:flex;gap:6px}
+.selbar .sb-a .btn{flex:1 1 0;min-width:0;flex-direction:column;gap:3px;padding:8px 4px;font-size:12.5px;border-radius:14px}
+.selbar .sb-a .btn svg.i{width:20px;height:20px}
+
+/* Navigation unten */
+.nav{display:flex;gap:6px;padding:6px;border-radius:20px}
+.nav button{flex:1;display:flex;flex-direction:column;align-items:center;gap:3px;border:1px solid transparent;background:none;border-radius:15px;padding:7px 4px;font-size:12px;color:var(--muted)}
+.nav button svg.i{width:22px;height:22px}
+.nav button.on{color:var(--accent);font-weight:600;border-color:var(--btn-rim);
+  background:linear-gradient(180deg,var(--gloss) 0%,var(--gloss2) 48%,transparent 52%),linear-gradient(180deg,var(--btn-top),var(--btn-bot));
+  box-shadow:inset 0 1px 0 var(--btn-edge),0 2px 0 var(--btn-rim),0 6px 12px -6px var(--shadow)}
+.nav .badge{position:absolute;margin-left:22px;margin-top:-4px;min-width:18px;height:18px;border-radius:99px;background:var(--accent);color:var(--accent-fg);font-size:11px;font-weight:700;display:grid;place-items:center;padding:0 5px}
+.nav button{position:relative}
+
+/* Dialoge */
+.overlay{position:fixed;inset:0;z-index:50;display:flex;align-items:flex-end;justify-content:center;background:rgba(8,20,34,.38);
+  padding:10px 10px calc(10px + env(safe-area-inset-bottom,0px));backdrop-filter:blur(4px);-webkit-backdrop-filter:blur(4px);opacity:0;transition:opacity .18s}
+.overlay.show{opacity:1}
+.modal{width:min(540px,100%);max-height:calc(100% - 30px);overflow-y:auto;border-radius:24px;padding:18px;background:var(--glass-strong);border:1px solid var(--line);
+  backdrop-filter:blur(24px);-webkit-backdrop-filter:blur(24px);box-shadow:inset 0 1px 0 var(--hi),0 30px 60px -20px var(--shadow);
+  transform:translateY(24px);transition:transform .2s}
+.overlay.show .modal{transform:none}
+.m-head{display:flex;align-items:center;gap:8px;margin-bottom:12px}
+.m-head h3{flex:1}
+.modal p{font-size:14px;line-height:1.5;margin:0 0 10px}
+.dev{width:100%;display:flex;align-items:center;gap:12px;text-align:left;padding:12px;border-radius:16px;margin-bottom:8px;
+  background:var(--card-bg);border:1px solid var(--card-line);box-shadow:inset 0 1px 0 var(--hi),var(--card-sh)}
+.dev svg.i{width:26px;height:26px;color:var(--accent)}
+.dev div{flex:1;min-width:0;display:flex;flex-direction:column;gap:2px}
+.dev b{font-weight:600}
+.dev span{font-size:12.5px;color:var(--muted)}
+.dev.on{box-shadow:inset 0 1px 0 var(--hi),0 0 0 2px var(--ok),var(--card-sh)}
+.dev .tag{flex:none;font-size:12.5px;color:var(--danger);font-weight:600}
+.searching{display:flex;align-items:center;gap:10px;padding:14px 6px;color:var(--muted);font-size:14px}
+.searching .spin{margin:0;width:20px;height:20px}
+.steps{margin:4px 0 10px;padding-left:22px;font-size:14px;line-height:1.55}
+.steps li{margin-bottom:3px}
+.set-row{display:flex;flex-direction:column;gap:8px;padding:12px 0;border-top:1px solid var(--line)}
+.set-row:first-of-type{border-top:0;padding-top:0}
+.set-row .lt{font-weight:600;font-size:14px}
+.set-row .ls{font-size:12.5px;color:var(--muted);line-height:1.4}
+.field input[type=text]{width:100%;border:1px solid var(--line);border-radius:12px;padding:12px;background:var(--glass);box-shadow:inset 0 2px 4px var(--lo);font-size:16px;-webkit-user-select:text;user-select:text}
+.m-foot{display:flex;gap:8px;margin-top:14px}
+.m-foot .btn{flex:1}
+
+.toast{position:fixed;left:50%;top:calc(84px + env(safe-area-inset-top,0px));transform:translateX(-50%);z-index:60;padding:10px 16px;border-radius:14px;
+  background:var(--glass-strong);border:1px solid var(--line);backdrop-filter:blur(18px);-webkit-backdrop-filter:blur(18px);
+  box-shadow:inset 0 1px 0 var(--hi),0 14px 30px -10px var(--shadow);font-size:14px;max-width:calc(100% - 40px);text-align:center;opacity:0;transition:opacity .2s}
+.toast.show{opacity:1}
+@media (prefers-reduced-motion:reduce){*{transition:none!important;animation-duration:3s!important}}
+</style>
+</head>
+<body>
+<div class="app">
+  <header class="pane top">
+    <div class="logo" id="logo"></div>
+    <div class="ttl">
+      <h1>UrlaubsCast</h1>
+      <div class="status"><i class="dot" id="dot"></i><span id="statusTxt">Nicht verbunden</span></div>
+    </div>
+    <button class="btn icon" id="bMirror" aria-label="Bildschirm spiegeln"></button>
+    <button class="btn icon" id="bSettings" aria-label="Einstellungen"></button>
+    <button class="btn icon" id="bCast" aria-label="Mit Fernseher verbinden"></button>
+  </header>
+
+  <main class="pane">
+    <!-- Galerie -->
+    <section class="tab" id="tab-gal">
+      <div class="tools" id="galTools">
+        <div class="seg" id="segType">
+          <button data-t="all" class="on">Alle</button><button data-t="img">Fotos</button><button data-t="vid">Videos</button>
+        </div>
+        <div class="row">
+          <select class="gsel" id="album" aria-label="Album"></select>
+          <button class="btn icon" id="bRefresh" aria-label="Neu einlesen"></button>
+        </div>
+      </div>
+      <p class="hint" id="galHint">Antippen = sofort auf dem Fernseher · Lange drücken = für die Diashow auswählen · „Tag“ = ganzen Tag auswählen</p>
+      <div id="permNote"></div>
+      <div id="grid"><i class="spin"></i></div>
+      <div id="more" style="height:1px"></div>
+    </section>
+
+    <!-- Diashow -->
+    <section class="tab" id="tab-show" hidden>
+      <div class="pane now">
+        <div class="stage" id="stage">
+          <img class="blur" id="nowBlur" alt="" hidden>
+          <img class="pic" id="nowImg" alt="" hidden>
+          <div class="gloss"></div>
+          <div class="stage-empty" id="stageEmpty"></div>
+          <span class="pill l" id="nowBadge" hidden></span>
+          <span class="pill r" id="nowCount" hidden></span>
+        </div>
+        <div class="prog"><i id="progBar"></i></div>
+        <div class="now-info"><b id="nowTitle">Bereit</b><span id="nowSub">Fotos und Videos aus der Galerie auswählen</span></div>
+        <div class="note msg" id="nowMsg" hidden></div>
+        <div class="controls">
+          <button class="btn round" id="cPrev" aria-label="Zurück"></button>
+          <button class="btn round big primary" id="cPlay" aria-label="Abspielen"></button>
+          <button class="btn round" id="cNext" aria-label="Weiter"></button>
+          <button class="btn round" id="cStop" aria-label="Beenden"></button>
+        </div>
+        <div class="quick">
+          <label class="fld"><span class="lab">Anzeigedauer pro Foto <b id="ivLbl">8 s</b></span>
+            <input type="range" id="iv" min="2" max="60" step="1" value="8"></label>
+          <div class="row2">
+            <label class="sw"><input type="checkbox" id="loop"><i></i><span>Endlos wiederholen</span></label>
+            <select class="gsel" id="vmax" aria-label="Videolänge">
+              <option value="0">Videos ganz abspielen</option>
+              <option value="10">Videos max. 10 s</option>
+              <option value="20">Videos max. 20 s</option>
+              <option value="30">Videos max. 30 s</option>
+              <option value="60">Videos max. 1 Min.</option>
+            </select>
+          </div>
+        </div>
+      </div>
+      <div class="list-head">
+        <h2>Ablauf<small id="listInfo">noch leer</small></h2>
+        <div class="acts">
+          <button class="btn sm" id="lShuffle" aria-label="Mischen"></button>
+          <button class="btn sm" id="lSave"></button>
+          <button class="btn sm danger" id="lClear" aria-label="Ablauf leeren"></button>
+        </div>
+      </div>
+      <div id="plist"></div>
+    </section>
+
+    <!-- Gespeicherte Abläufe -->
+    <section class="tab" id="tab-lists" hidden>
+      <div class="pane intro">
+        <p>Abläufe sind fertig zusammengestellte Diashows – z. B. „Schottland Tag 1“. Vorher in Ruhe festlegen und später mit einem Tipp starten.</p>
+        <button class="btn primary wide" id="bSaveCur"></button>
+      </div>
+      <div id="shows"></div>
+    </section>
+  </main>
+
+  <div class="pane dock" id="mini" hidden>
+    <img id="mpImg" alt="">
+    <div class="mp-t"><b id="mpTitle"></b><span id="mpSub"></span><div class="prog"><i id="mpProg"></i></div></div>
+    <button class="btn icon" id="mpPlay" aria-label="Pause"></button>
+    <button class="btn icon" id="mpNext" aria-label="Weiter"></button>
+    <button class="btn icon" id="mpStop" aria-label="Beenden"></button>
+  </div>
+
+  <div class="pane selbar" id="selbar" hidden>
+    <div class="sb-h"><b id="selN">0 ausgewählt</b><button class="mini" id="sX" aria-label="Auswahl beenden"></button></div>
+    <div class="sb-a">
+      <button class="btn" id="sAdd"></button>
+      <button class="btn" id="sNext"></button>
+      <button class="btn primary" id="sStart"></button>
+    </div>
+  </div>
+
+  <nav class="pane nav">
+    <button data-tab="gal" class="on"></button>
+    <button data-tab="show"></button>
+    <button data-tab="lists"></button>
+  </nav>
+</div>
+
+<div class="overlay" id="overlay" hidden><div class="modal" id="modal"></div></div>
+<div class="toast" id="toast" hidden></div>
+
+<script>
+'use strict';
+const $ = id => document.getElementById(id);
+const esc = s => String(s ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+
+/* ---------- Symbole ---------- */
+const IC = {
+  cast:'<path d="M2 8V6a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2h-6"/><path d="M2 12a9 9 0 0 1 8 8"/><path d="M2 16a5 5 0 0 1 4 4"/><path d="M2 20h.01"/>',
+  mirror:'<path d="M13 3H4a2 2 0 0 0-2 2v10a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2v-3"/><path d="M8 21h8"/><path d="M12 17v4"/><path d="m17 8 5-5"/><path d="M17 3h5v5"/>',
+  sliders:'<path d="M21 4h-7"/><path d="M10 4H3"/><path d="M21 12h-9"/><path d="M8 12H3"/><path d="M21 20h-5"/><path d="M12 20H3"/><path d="M14 2v4"/><path d="M8 10v4"/><path d="M16 18v4"/>',
+  grid:'<rect width="7" height="7" x="3" y="3" rx="1.5"/><rect width="7" height="7" x="14" y="3" rx="1.5"/><rect width="7" height="7" x="14" y="14" rx="1.5"/><rect width="7" height="7" x="3" y="14" rx="1.5"/>',
+  slides:'<path d="M2 4v16"/><rect width="12" height="16" x="6" y="4" rx="2"/><path d="M22 4v16"/><path d="m10.5 9.5 3.5 2.5-3.5 2.5z"/>',
+  library:'<path d="m16 6 4 14"/><path d="M12 6v14"/><path d="M8 8v12"/><path d="M4 4v16"/>',
+  play:'<path d="M7 4.6v14.8a1 1 0 0 0 1.53.85l11.6-7.4a1 1 0 0 0 0-1.7L8.53 3.75A1 1 0 0 0 7 4.6z" fill="currentColor" stroke="none"/>',
+  pause:'<rect x="6" y="4" width="4.2" height="16" rx="1.2" fill="currentColor" stroke="none"/><rect x="13.8" y="4" width="4.2" height="16" rx="1.2" fill="currentColor" stroke="none"/>',
+  next:'<path d="M5 5.2v13.6a.8.8 0 0 0 1.25.66l9.7-6.8a.8.8 0 0 0 0-1.32l-9.7-6.8A.8.8 0 0 0 5 5.2z" fill="currentColor" stroke="none"/><path d="M19 5v14"/>',
+  prev:'<path d="M19 5.2v13.6a.8.8 0 0 1-1.25.66l-9.7-6.8a.8.8 0 0 1 0-1.32l9.7-6.8A.8.8 0 0 1 19 5.2z" fill="currentColor" stroke="none"/><path d="M5 5v14"/>',
+  stop:'<rect x="5.5" y="5.5" width="13" height="13" rx="2.5" fill="currentColor" stroke="none"/>',
+  x:'<path d="M18 6 6 18"/><path d="m6 6 12 12"/>',
+  check:'<path d="M20 6 9 17l-5-5"/>',
+  up:'<path d="m18 15-6-6-6 6"/>',
+  down:'<path d="m6 9 6 6 6-6"/>',
+  trash:'<path d="M3 6h18"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6"/><path d="M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/>',
+  shuffle:'<path d="m18 14 4 4-4 4"/><path d="m18 2 4 4-4 4"/><path d="M2 18h1.97a4 4 0 0 0 3.3-1.7l5.45-8.6a4 4 0 0 1 3.3-1.7H22"/><path d="M2 6h1.97a4 4 0 0 1 3.6 2.2"/><path d="M22 18h-6.04a4 4 0 0 1-3.3-1.8l-.36-.45"/>',
+  save:'<path d="M15.2 3a2 2 0 0 1 1.4.6l3.8 3.8a2 2 0 0 1 .6 1.4V19a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2z"/><path d="M17 21v-7a1 1 0 0 0-1-1H8a1 1 0 0 0-1 1v7"/><path d="M7 3v4a1 1 0 0 0 1 1h7"/>',
+  plus:'<path d="M5 12h14"/><path d="M12 5v14"/>',
+  listnext:'<path d="M11 12H3"/><path d="M16 6H3"/><path d="M16 18H3"/><path d="M18 9v6"/><path d="M21 12h-6"/>',
+  refresh:'<path d="M3 12a9 9 0 0 1 9-9 9.75 9.75 0 0 1 6.74 2.74L21 8"/><path d="M21 3v5h-5"/><path d="M21 12a9 9 0 0 1-9 9 9.75 9.75 0 0 1-6.74-2.74L3 16"/><path d="M8 16H3v5"/>',
+  tv:'<rect width="20" height="15" x="2" y="7" rx="2"/><path d="m17 2-5 5-5-5"/>',
+  video:'<path d="m16 13 5.22 3.48a.5.5 0 0 0 .78-.42V7.87a.5.5 0 0 0-.75-.43L16 10.5"/><rect x="2" y="6" width="14" height="12" rx="2"/>',
+  image:'<rect width="18" height="18" x="3" y="3" rx="2"/><circle cx="9" cy="9" r="2"/><path d="m21 15-3.09-3.09a2 2 0 0 0-2.82 0L6 21"/>',
+  ext:'<path d="M15 3h6v6"/><path d="M10 14 21 3"/><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/>',
+  vplay:'<path d="M7 5v14l11-7z" fill="currentColor" stroke="none"/>',
+};
+const ic = n => `<svg class="i" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">${IC[n]}</svg>`;
+
+/* ---------- Zustand ---------- */
+const S = {
+  tab:'gal', items:[], buckets:[], type:'all', bucket:-1, sel:new Set(), selMode:false,
+  st:{mode:'idle', paused:false, index:-1, count:0, cur:null, msg:null, prog:0, conn:'off', dev:null, singlePos:-1, singleCount:0},
+  list:[], inList:new Set(), shows:[], set:{interval:8, loop:true, videoMax:0, uhd:false, screenOn:true},
+  devs:[], devOpen:false, perm:'none', version:'', lastScan:0,
+};
+const MOCK = !window.CastBridge;
+
+/* ---------- Verbindung zur App ---------- */
+const __cb = {}; let __n = 0;
+window.__reply = (id, ok, payload) => {
+  const c = __cb[id]; if (!c) return; delete __cb[id];
+  let j = {}; try { j = JSON.parse(payload) } catch (e) {}
+  ok ? c.res(j) : c.rej(new Error(j.error || 'Fehler'));
+};
+function api(action, data = {}) {
+  if (MOCK) return Mock.api(action, data);
+  return new Promise((res, rej) => {
+    const id = 'c' + (++__n); __cb[id] = {res, rej};
+    try { CastBridge.call(id, JSON.stringify({action, ...data})) }
+    catch (e) { delete __cb[id]; rej(new Error('Die Verbindung zur App fehlt.')) }
+  });
+}
+window.__push = (kind, json) => {
+  let d; try { d = JSON.parse(json) } catch (e) { return }
+  if (kind === 'state') setState(d);
+  else if (kind === 'list') setList(d);
+  else if (kind === 'prog') setProg(d.p);
+  else if (kind === 'devices') { S.devs = d; renderDevices() }
+  else if (kind === 'shows') { S.shows = d; renderShows() }
+};
+window.__shared = n => {
+  if (n > 0) { toast(n === 1 ? '1 Foto/Video zum Ablauf hinzugefügt' : n + ' Fotos/Videos zum Ablauf hinzugefügt'); setTab('show') }
+  else toast('Diese Datei kann nicht gezeigt werden');
+};
+window.__back = () => {
+  if (closeModal()) return true;
+  if (S.selMode) { exitSel(); return true }
+  if (S.tab !== 'gal') { setTab('gal'); return true }
+  return false;
+};
+
+function thumbUrl(k, s) { return MOCK ? Mock.thumb(k) : '/thumb/' + encodeURIComponent(k) + '?s=' + s }
+
+/* ---------- Formate ---------- */
+const fDay = new Intl.DateTimeFormat('de-DE', {weekday:'long', day:'numeric', month:'long', year:'numeric'});
+const fDate = new Intl.DateTimeFormat('de-DE', {day:'2-digit', month:'2-digit', year:'numeric'});
+const fTime = new Intl.DateTimeFormat('de-DE', {hour:'2-digit', minute:'2-digit'});
+const dayLabel = ts => ts ? fDay.format(new Date(ts * 1000)) : 'Ohne Datum';
+const dateTime = ts => ts ? fDate.format(new Date(ts * 1000)) + ' · ' + fTime.format(new Date(ts * 1000)) : '';
+function fmtDur(sec) {
+  sec = Math.max(0, Math.round(sec || 0));
+  const h = Math.floor(sec / 3600), m = Math.floor(sec / 60) % 60, s = sec % 60;
+  return (h ? h + ':' + String(m).padStart(2, '0') : m) + ':' + String(s).padStart(2, '0');
+}
+function fmtTotal(sec) {
+  if (sec < 60) return sec + ' s';
+  const m = Math.round(sec / 60);
+  return m < 60 ? 'ca. ' + m + ' Min.' : 'ca. ' + Math.floor(m / 60) + ' Std. ' + (m % 60) + ' Min.';
+}
+const plural = (n, a, b) => n + ' ' + (n === 1 ? a : b);
+
+/* ---------- Toast & Dialoge ---------- */
+let toastT = 0;
+function toast(t) {
+  const el = $('toast'); el.textContent = t; el.hidden = false;
+  requestAnimationFrame(() => el.classList.add('show'));
+  clearTimeout(toastT); toastT = setTimeout(() => { el.classList.remove('show'); setTimeout(() => el.hidden = true, 250) }, 2600);
+}
+const M = {onClose:null};
+function openModal(html, onClose) {
+  if (!$('overlay').hidden) closeModal();
+  $('modal').innerHTML = html; M.onClose = onClose || null;
+  $('overlay').hidden = false; requestAnimationFrame(() => $('overlay').classList.add('show'));
+}
+function closeModal() {
+  const o = $('overlay'); if (o.hidden) return false;
+  o.classList.remove('show'); o.hidden = true;
+  const f = M.onClose; M.onClose = null; if (f) f();
+  return true;
+}
+function head(icon, title) { return `<div class="m-head"><h3>${ic(icon)}${esc(title)}</h3><button class="mini" data-close aria-label="Schließen">${ic('x')}</button></div>` }
+
+/* ---------- Kopfzeile & Status ---------- */
+function renderStatus() {
+  const c = S.st.conn, d = $('dot');
+  d.className = 'dot' + (c === 'on' ? ' on' : c === 'connecting' ? ' connecting' : '');
+  $('statusTxt').textContent = c === 'on' ? (S.st.dev || 'Fernseher verbunden')
+    : c === 'connecting' ? 'Verbindet mit ' + (S.st.dev || 'Fernseher') + ' …'
+    : c === 'unavailable' ? 'Google Cast nicht verfügbar' : 'Nicht verbunden';
+  $('bCast').classList.toggle('on', c === 'on');
+}
+
+function setState(d) {
+  const prevConn = S.st.conn, prevCur = S.st.cur && S.st.cur.k;
+  S.st = d;
+  renderStatus(); renderNow(); renderMini();
+  if ((d.cur && d.cur.k) !== prevCur) markLive();
+  markListCur();
+  if (S.devOpen) renderDevices();
+  if (S.devOpen && prevConn !== 'on' && d.conn === 'on') {
+    toast('Verbunden mit ' + (d.dev || 'dem Fernseher'));
+    setTimeout(closeModal, 700);
+  }
+}
+
+/* ---------- Galerie ---------- */
+const G = {days:[], rendered:0, keys:[]};
+function filtered() {
+  return S.items.filter(it => (S.type === 'all' || (S.type === 'img' ? !it[1] : it[1])) && (S.bucket < 0 || it[4] === S.bucket));
+}
+function buildDays() {
+  const list = filtered(); G.keys = list.map(x => x[0]);
+  const days = []; let cur = null;
+  for (const it of list) {
+    const dt = new Date(it[2] * 1000);
+    const key = it[2] ? dt.getFullYear() + '-' + dt.getMonth() + '-' + dt.getDate() : 'x';
+    if (!cur || cur.key !== key) { cur = {key, ts:it[2], items:[]}; days.push(cur) }
+    cur.items.push(it);
+  }
+  G.days = days; G.rendered = 0;
+}
+function thHtml(it) {
+  const k = it[0];
+  const cls = 'th' + (S.sel.has(k) ? ' sel' : '') + (S.inList.has(k) ? ' inl' : '') + (S.st.cur && S.st.cur.k === k ? ' live' : '');
+  return `<button class="${cls}" data-k="${esc(k)}"><img loading="lazy" decoding="async" src="${thumbUrl(k, 320)}" alt="">` +
+    (it[1] ? `<span class="vb">${ic('vplay')}${fmtDur(it[3])}</span>` : '') + `<i class="ck">${ic('check')}</i></button>`;
+}
+function dayHtml(d, i) {
+  const v = d.items.filter(x => x[1]).length, p = d.items.length - v;
+  const parts = []; if (p) parts.push(plural(p, 'Foto', 'Fotos')); if (v) parts.push(plural(v, 'Video', 'Videos'));
+  return `<section class="day"><div class="day-h"><div><b>${esc(dayLabel(d.ts))}</b><span>${parts.join(' · ')}</span></div>` +
+    `<button class="btn sm" data-day="${i}">${ic('check')}Tag</button></div><div class="thumbs">${d.items.map(thHtml).join('')}</div></section>`;
+}
+function renderGallery() {
+  buildDays();
+  const g = $('grid');
+  if (!G.days.length) {
+    g.innerHTML = `<div class="empty">${ic('image')}<div>${S.items.length ? 'In dieser Auswahl gibt es keine Fotos oder Videos.' : 'Keine Fotos oder Videos gefunden.'}</div></div>`;
+    return;
+  }
+  g.innerHTML = ''; renderMoreDays();
+}
+function renderMoreDays() {
+  if (G.rendered >= G.days.length) return;
+  let n = 0, html = '';
+  while (G.rendered < G.days.length && n < 150) { const i = G.rendered++; html += dayHtml(G.days[i], i); n += G.days[i].items.length }
+  $('grid').insertAdjacentHTML('beforeend', html);
+}
+function fillAlbums() {
+  const counts = new Map();
+  for (const it of S.items) counts.set(it[4], (counts.get(it[4]) || 0) + 1);
+  const opts = [...counts.entries()].sort((a, b) => b[1] - a[1])
+    .map(([b, n]) => `<option value="${b}">${esc(S.buckets[b] || 'Ohne Album')} (${n})</option>`).join('');
+  $('album').innerHTML = `<option value="-1">Alle Alben (${S.items.length})</option>` + opts;
+  if (S.bucket >= 0 && !counts.has(S.bucket)) S.bucket = -1;
+  $('album').value = String(S.bucket);
+}
+async function loadMedia(ask, force) {
+  if (force) S.sig = '';
+  if (S.perm === 'none' && ask) { try { S.perm = (await api('askPerm')).perm } catch (e) {} }
+  renderPermNote();
+  if (S.perm === 'none') { $('grid').innerHTML = ''; return }
+  if (!S.items.length) $('grid').innerHTML = '<i class="spin"></i>';
+  try {
+    const r = await api('media');
+    const items = r.items || [], sig = items.length + '|' + (items[0] || [])[0] + '|' + (items[items.length - 1] || [])[0];
+    S.lastScan = Date.now();
+    if (sig === S.sig && S.items.length) return;
+    S.sig = sig; S.buckets = r.buckets || []; S.items = items;
+    fillAlbums(); renderGallery();
+  } catch (e) { $('grid').innerHTML = `<div class="empty">${esc(e.message)}</div>` }
+}
+function renderPermNote() {
+  const n = $('permNote');
+  if (S.perm === 'none') {
+    n.innerHTML = `<div class="empty">${ic('image')}<p>UrlaubsCast braucht Zugriff auf deine Fotos und Videos, um sie auf dem Fernseher zu zeigen.</p>
+      <button class="btn primary" id="bPerm">Zugriff erlauben</button><p class="hint small">Kommt keine Abfrage, unter „App-Einstellungen“ → Berechtigungen → Fotos und Videos erlauben.</p>
+      <button class="btn sm" id="bAppSet">App-Einstellungen</button></div>`;
+    $('bPerm').onclick = () => loadMedia(true);
+    $('bAppSet').onclick = () => api('appSettings').catch(() => {});
+  } else if (S.perm === 'partial') {
+    n.innerHTML = `<div class="note info">Du hast nur ausgewählte Fotos freigegeben. <button class="btn sm" id="bPerm">Auswahl ändern</button></div>`;
+    $('bPerm').onclick = () => { S.perm = 'none'; loadMedia(true) };
+  } else n.innerHTML = '';
+}
+function markLive() {
+  document.querySelectorAll('.th.live').forEach(e => e.classList.remove('live'));
+  const k = S.st.cur && S.st.cur.k;
+  if (k) document.querySelectorAll(`.th[data-k="${CSS.escape(k)}"]`).forEach(e => e.classList.add('live'));
+}
+function markInList() {
+  document.querySelectorAll('.th').forEach(e => e.classList.toggle('inl', S.inList.has(e.dataset.k)));
+}
+
+/* Auswahl */
+function enterSel() { S.selMode = true; $('grid').classList.add('selmode'); renderBars() }
+function exitSel() {
+  S.selMode = false; S.sel.clear(); $('grid').classList.remove('selmode');
+  document.querySelectorAll('.th.sel').forEach(e => e.classList.remove('sel'));
+  renderBars();
+}
+function toggleSel(k, el) {
+  if (S.sel.has(k)) S.sel.delete(k); else S.sel.add(k);
+  if (el) el.classList.toggle('sel', S.sel.has(k));
+  if (!S.sel.size) exitSel(); else renderBars();
+}
+function selectDay(i) {
+  const d = G.days[i]; if (!d) return;
+  const all = d.items.every(x => S.sel.has(x[0]));
+  for (const x of d.items) all ? S.sel.delete(x[0]) : S.sel.add(x[0]);
+  if (!S.selMode) enterSel();
+  const btn = document.querySelector(`#grid [data-day="${i}"]`), sec = btn && btn.closest('.day');
+  if (sec) sec.querySelectorAll('.th').forEach(e => e.classList.toggle('sel', S.sel.has(e.dataset.k)));
+  if (!S.sel.size) exitSel(); else renderBars();
+}
+function selKeysChrono() {
+  const pos = new Map(S.items.map((x, i) => [x[0], i]));
+  return [...S.sel].sort((a, b) => (pos.get(b) ?? 0) - (pos.get(a) ?? 0)); // Galerie ist neueste zuerst → umdrehen
+}
+function renderBars() {
+  $('selbar').hidden = !S.selMode;
+  $('selN').textContent = plural(S.sel.size, 'ausgewählt', 'ausgewählt');
+  renderMini();
+}
+
+/* Langes Drücken = auswählen, Tippen = sofort zeigen */
+const LP = {t:0, x:0, y:0, fired:false};
+function bindGrid() {
+  const g = $('grid');
+  g.addEventListener('pointerdown', e => {
+    const th = e.target.closest('.th'); if (!th) return;
+    LP.x = e.clientX; LP.y = e.clientY; LP.fired = false; clearTimeout(LP.t);
+    LP.t = setTimeout(() => { LP.t = 0; LP.fired = true; if (!S.selMode) enterSel(); toggleSel(th.dataset.k, th); try { navigator.vibrate && navigator.vibrate(12) } catch (x) {} }, 430);
+  });
+  g.addEventListener('pointermove', e => {
+    if (LP.t && (Math.abs(e.clientX - LP.x) > 10 || Math.abs(e.clientY - LP.y) > 10)) { clearTimeout(LP.t); LP.t = 0 }
+  });
+  const cancel = () => { clearTimeout(LP.t); LP.t = 0 };
+  g.addEventListener('pointerup', cancel); g.addEventListener('pointercancel', cancel);
+  g.addEventListener('contextmenu', e => e.preventDefault());
+  g.addEventListener('click', e => {
+    const dh = e.target.closest('[data-day]'); if (dh) { selectDay(+dh.dataset.day); return }
+    const th = e.target.closest('.th'); if (!th) return;
+    if (LP.fired) { LP.fired = false; return }
+    if (S.selMode) toggleSel(th.dataset.k, th); else showSingle(th.dataset.k);
+  });
+  g.addEventListener('error', e => { if (e.target.tagName === 'IMG') e.target.classList.add('broken') }, true);
+  const io = new IntersectionObserver(es => { if (es.some(x => x.isIntersecting)) renderMoreDays() }, {root:$('tab-gal'), rootMargin:'1500px'});
+  io.observe($('more'));
+}
+async function showSingle(k) {
+  try {
+    await api('single', {key:k, ctx:G.keys});
+    if (S.st.conn !== 'on') openDevices('Nach dem Verbinden erscheint das Foto sofort auf dem Fernseher.');
+  } catch (e) { toast(e.message) }
+}
+
+/* ---------- Diashow ---------- */
+function renderNow() {
+  const st = S.st, c = st.cur, img = $('nowImg'), bl = $('nowBlur');
+  if (c) {
+    const u = thumbUrl(c.k, 1280);
+    if (img.dataset.k !== c.k) { img.src = u; bl.src = thumbUrl(c.k, 320); img.dataset.k = c.k }
+    img.hidden = bl.hidden = false; $('stageEmpty').hidden = true;
+    $('nowTitle').textContent = dayLabel(c.d);
+    $('nowSub').textContent = (c.v ? 'Video · ' + fmtDur(c.du) : 'Foto · ' + fTime.format(new Date(c.d * 1000)) + ' Uhr') + (c.b ? ' · ' + c.b : '');
+  } else {
+    img.hidden = bl.hidden = true; img.dataset.k = ''; $('stageEmpty').hidden = false;
+    $('stageEmpty').innerHTML = ic('tv') + '<div>' + (st.conn === 'on' ? 'Bereit – noch nichts auf dem Fernseher' : 'Noch nicht mit dem Fernseher verbunden') + '</div>';
+    $('nowTitle').textContent = 'Bereit';
+    $('nowSub').textContent = st.count ? 'Mit ▶ startet die Diashow' : 'Fotos und Videos in der Galerie auswählen';
+  }
+  const badge = $('nowBadge'), cnt = $('nowCount');
+  const label = st.mode === 'show' ? (st.paused ? 'Pausiert' : 'Diashow') : st.mode === 'single' ? (st.finished ? 'Diashow beendet' : 'Einzelbild') : '';
+  badge.hidden = !label; badge.textContent = label; badge.classList.toggle('live', st.mode === 'show' && !st.paused && st.conn === 'on');
+  const counter = st.mode === 'show' ? (st.index + 1) + ' / ' + st.count : (st.mode === 'single' && st.singleCount > 1) ? (st.singlePos + 1) + ' / ' + st.singleCount : '';
+  cnt.hidden = !counter; cnt.textContent = counter;
+  const playing = (st.mode === 'show' || (st.mode === 'single' && c && c.v)) && !st.paused;
+  $('cPlay').innerHTML = ic(playing ? 'pause' : 'play');
+  $('cPlay').setAttribute('aria-label', playing ? 'Pause' : 'Abspielen');
+  $('cPrev').disabled = $('cNext').disabled = st.mode === 'idle';
+  $('cStop').disabled = st.mode === 'idle';
+  const m = $('nowMsg'); m.hidden = !st.msg; m.textContent = st.msg || '';
+  setProg(st.mode === 'idle' ? 0 : st.prog);
+}
+function setProg(p) {
+  const w = Math.max(0, Math.min(1, p || 0)) * 100 + '%';
+  $('progBar').style.width = w; $('mpProg').style.width = w;
+}
+function setList(list) {
+  S.list = list; S.inList = new Set(list.map(x => x.k));
+  renderList(); markInList();
+}
+function listInfo() {
+  const L = S.list; if (!L.length) return 'noch leer';
+  const v = L.filter(x => x.v), p = L.length - v.length;
+  const vmax = S.set.videoMax;
+  const secs = p * S.set.interval + v.reduce((a, x) => a + (vmax > 0 ? Math.min(vmax, x.du || vmax) : (x.du || 0)), 0);
+  const parts = []; if (p) parts.push(plural(p, 'Foto', 'Fotos')); if (v.length) parts.push(plural(v.length, 'Video', 'Videos'));
+  return parts.join(' · ') + ' · ' + fmtTotal(secs);
+}
+function renderList() {
+  const L = S.list, box = $('plist');
+  $('listInfo').textContent = listInfo();
+  const nb = document.querySelector('.nav [data-tab="show"] .badge');
+  if (nb) { nb.textContent = L.length; nb.hidden = !L.length }
+  $('lShuffle').disabled = L.length < 2; $('lSave').disabled = !L.length; $('lClear').disabled = !L.length;
+  if (!L.length) {
+    box.innerHTML = `<div class="empty">${ic('slides')}<div>Noch keine Fotos im Ablauf.<br>In der <b>Galerie</b> lange auf ein Foto drücken, weitere antippen und dann <b>„Zum Ablauf“</b> wählen.</div></div>`;
+    return;
+  }
+  box.innerHTML = L.map((it, i) => `<div class="ri" data-i="${i}"><span class="num">${i + 1}</span>
+    <div class="tw"><img loading="lazy" src="${thumbUrl(it.k, 160)}" alt="">${it.v ? `<span class="vb">${fmtDur(it.du)}</span>` : ''}</div>
+    <div class="ri-t"><b>${esc(dateTime(it.d) || it.n)}</b><span>${it.v ? 'Video' : 'Foto'}${it.b ? ' · ' + esc(it.b) : ''}</span></div>
+    <div class="ri-a"><button class="mini" data-a="up" aria-label="Nach oben"${i === 0 ? ' disabled' : ''}>${ic('up')}</button>
+    <button class="mini" data-a="down" aria-label="Nach unten"${i === L.length - 1 ? ' disabled' : ''}>${ic('down')}</button>
+    <button class="mini" data-a="del" aria-label="Entfernen">${ic('x')}</button></div></div>`).join('');
+  markListCur();
+}
+function markListCur() {
+  const st = S.st;
+  const i = st.mode !== 'idle' && st.cur && S.list[st.index] && S.list[st.index].k === st.cur.k ? st.index : -1;
+  document.querySelectorAll('.ri.cur').forEach(e => e.classList.remove('cur'));
+  if (i >= 0) { const r = document.querySelector(`.ri[data-i="${i}"]`); if (r) r.classList.add('cur') }
+}
+function needTv(note) { if (S.st.conn !== 'on') { openDevices(note); return true } return false }
+
+/* ---------- Mini-Player ---------- */
+function renderMini() {
+  const st = S.st, c = st.cur;
+  const show = st.mode !== 'idle' && !!c && S.tab !== 'show' && !S.selMode;
+  $('mini').hidden = !show; if (!show) return;
+  if ($('mpImg').dataset.k !== c.k) { $('mpImg').src = thumbUrl(c.k, 160); $('mpImg').dataset.k = c.k }
+  $('mpTitle').textContent = st.mode === 'show' ? (st.paused ? 'Diashow pausiert' : 'Diashow') + ' · ' + (st.index + 1) + '/' + st.count : 'Auf dem Fernseher';
+  $('mpSub').textContent = st.msg || dateTime(c.d);
+  const playing = (st.mode === 'show' || c.v) && !st.paused;
+  $('mpPlay').innerHTML = ic(playing ? 'pause' : 'play');
+}
+
+/* ---------- Gespeicherte Abläufe ---------- */
+function renderShows() {
+  const box = $('shows');
+  if (!S.shows.length) {
+    box.innerHTML = `<div class="empty">${ic('library')}<div>Noch keine gespeicherten Abläufe.</div></div>`;
+    return;
+  }
+  box.innerHTML = S.shows.map((s, i) => `<div class="showcard">
+    <div class="mosaic${s.thumbs.length < 4 ? ' one' : ''}">${(s.thumbs.length < 4 ? s.thumbs.slice(0, 1) : s.thumbs).map(k => `<img loading="lazy" src="${thumbUrl(k, 200)}" alt="">`).join('')}</div>
+    <div class="sc-t"><b>${esc(s.name)}</b><span>${plural(s.count, 'Medium', 'Medien')}${s.videos ? ' · ' + plural(s.videos, 'Video', 'Videos') : ''}</span>
+      <span>gespeichert am ${fDate.format(new Date(s.created))}</span></div>
+    <div class="sc-a"><button class="btn sm" data-a="load" data-i="${i}">Laden</button>
+      <button class="btn sm primary" data-a="start" data-i="${i}">${ic('play')}Starten</button>
+      <button class="mini" data-a="del" data-i="${i}" aria-label="Löschen">${ic('trash')}</button></div></div>`).join('');
+}
+function suggestName() {
+  const L = S.list; if (!L.length) return '';
+  const cnt = new Map(); for (const x of L) if (x.b) cnt.set(x.b, (cnt.get(x.b) || 0) + 1);
+  const top = [...cnt.entries()].sort((a, b) => b[1] - a[1])[0];
+  const generic = /^(camera|kamera|dcim|screenshots?|whatsapp.*|geteilt)$/i;
+  const d = L[0].d ? fDate.format(new Date(L[0].d * 1000)) : '';
+  return (top && !generic.test(top[0]) ? top[0] + ' ' : 'Urlaub ') + d;
+}
+function saveDialog() {
+  if (!S.list.length) { toast('Der Ablauf ist noch leer'); return }
+  openModal(head('save', 'Ablauf speichern') +
+    `<p>Unter welchem Namen? Ein vorhandener Ablauf mit gleichem Namen wird ersetzt.</p>
+     <div class="field"><input type="text" id="nm" maxlength="60" value="${esc(suggestName())}"></div>
+     <div class="m-foot"><button class="btn" data-close>Abbrechen</button><button class="btn primary" id="nmOk">${ic('save')}Speichern</button></div>`);
+  const go = async () => {
+    try { const r = await api('saveShow', {name:$('nm').value}); S.shows = r.shows; renderShows(); closeModal(); toast('Ablauf gespeichert') }
+    catch (e) { toast(e.message) }
+  };
+  $('nmOk').onclick = go; $('nm').onkeydown = e => { if (e.key === 'Enter') go() };
+  setTimeout(() => { try { $('nm').focus(); $('nm').select() } catch (e) {} }, 250);
+}
+function confirmDlg(title, text, okLabel, fn) {
+  openModal(head('trash', title) + `<p>${esc(text)}</p><div class="m-foot"><button class="btn" data-close>Abbrechen</button><button class="btn primary" id="cfOk">${esc(okLabel)}</button></div>`);
+  $('cfOk').onclick = () => { closeModal(); fn() };
+}
+
+/* ---------- Fernseher verbinden ---------- */
+function openDevices(note) {
+  if (S.devOpen && !$('overlay').hidden) { renderDevices(); return }
+  openModal(head('tv', 'Fernseher verbinden') + (note ? `<p class="note info">${esc(note)}</p>` : '') +
+    `<div id="devList"></div><p class="hint small">Handy und waipu.tv Stick müssen im selben WLAN sein – oder der Stick ist mit dem Hotspot des Handys verbunden.</p>`,
+    () => { S.devOpen = false; api('devices', {on:false}).catch(() => {}) });
+  S.devOpen = true;
+  renderDevices();
+  api('devices', {on:true}).catch(e => toast(e.message));
+}
+function renderDevices() {
+  const box = $('devList'); if (!box) return;
+  let h = '';
+  if (S.st.conn === 'unavailable') h += '<p class="note">Google Cast ist auf diesem Handy nicht verfügbar (Google-Play-Dienste fehlen oder sind veraltet).</p>';
+  h += S.devs.map(x => {
+    const state = x.on ? (S.st.conn === 'on' ? 'Verbunden' : 'Verbindet …') : x.connecting ? 'Verbindet …' : (x.desc || 'Bereit');
+    return `<button class="dev${x.on && S.st.conn === 'on' ? ' on' : ''}" data-id="${esc(x.id)}" data-on="${x.on ? 1 : 0}">${ic('tv')}<div><b>${esc(x.name)}</b><span>${esc(state)}</span></div>${x.on && S.st.conn === 'on' ? '<span class="tag">Trennen</span>' : ''}</button>`;
+  }).join('');
+  if (!S.devs.length && S.st.conn !== 'unavailable') h += '<div class="searching"><i class="spin"></i><span>Suche Fernseher im WLAN …</span></div>';
+  box.innerHTML = h;
+}
+
+/* ---------- Spiegeln ---------- */
+function openMirror() {
+  openModal(head('mirror', 'Bildschirm spiegeln') +
+    `<p>Zeigt den kompletten Handy-Bildschirm auf dem Fernseher – praktisch für andere Apps, Karten oder Webseiten.</p>
+     <button class="btn primary wide" data-mirror="home">${ic('ext')}Mit Google Home spiegeln</button>
+     <ol class="steps"><li>In Google Home den <b>waipu.tv Stick</b> antippen</li>
+       <li>Unten <b>„Bildschirm streamen“</b> wählen (je nach Version „Bildschirm übertragen“)</li>
+       <li>Beenden: in Google Home <b>„Streaming beenden“</b></li></ol>
+     <button class="btn wide" data-mirror="system">${ic('ext')}Xiaomi „Übertragen“ öffnen</button>
+     <p class="hint small">Die Xiaomi-Funktion „Übertragen“ nutzt Miracast – das können viele Android-TV-Sticks nicht. Google Home klappt mit Chromecast-Geräten. Eine laufende Diashow endet beim Spiegeln. Für Fotos und Videos ist die App selbst besser: schärfer, flüssiger und ohne Benachrichtigungen auf dem Fernseher.</p>`);
+}
+
+/* ---------- Einstellungen ---------- */
+function setRange(el, v) { el.value = v; el.style.setProperty('--p', ((v - el.min) / (el.max - el.min) * 100) + '%') }
+function applySettingsUi() {
+  const s = S.set;
+  setRange($('iv'), s.interval); $('ivLbl').textContent = s.interval + ' s';
+  $('loop').checked = !!s.loop;
+  const vm = $('vmax'); vm.value = String(s.videoMax); if (vm.value !== String(s.videoMax)) vm.value = '0';
+  $('listInfo').textContent = listInfo();
+  const e = $('setIv'); if (e) { setRange(e, s.interval); $('setIvLbl').textContent = s.interval + ' s' }
+}
+async function saveSetting(patch) {
+  Object.assign(S.set, patch); applySettingsUi();
+  try { const r = await api('settings', {patch}); S.set = r.settings; applySettingsUi() } catch (e) { toast(e.message) }
+}
+function openSettings() {
+  const s = S.set;
+  openModal(head('sliders', 'Einstellungen') + `
+    <div class="set-row"><div class="fld"><span class="lab"><span class="lt">Anzeigedauer pro Foto</span><b id="setIvLbl">${s.interval} s</b></span>
+      <input type="range" id="setIv" min="2" max="60" step="1" value="${s.interval}"></div></div>
+    <div class="set-row"><label class="sw"><input type="checkbox" id="setLoop"${s.loop ? ' checked' : ''}><i></i><span>Diashow endlos wiederholen</span></label></div>
+    <div class="set-row"><span class="lt">Bildqualität auf dem Fernseher</span>
+      <div class="seg" id="setQ"><button data-q="0"${!s.uhd ? ' class="on"' : ''}>Full HD – schnell</button><button data-q="1"${s.uhd ? ' class="on"' : ''}>4K – sehr scharf</button></div>
+      <span class="ls">Fotos werden vor dem Senden passend verkleinert und gedreht (auch HEIC-Fotos). 4K braucht etwas länger pro Bild.</span></div>
+    <div class="set-row"><label class="sw"><input type="checkbox" id="setScreen"${s.screenOn ? ' checked' : ''}><i></i><span>Handy-Bildschirm während der Show anlassen</span></label>
+      <span class="ls">Die Show läuft auch bei ausgeschaltetem Handy-Bildschirm weiter (Benachrichtigung mit Pause / Weiter).</span></div>
+    <div class="set-row"><span class="lt">Fotozugriff</span><button class="btn" id="setPerm">Freigegebene Fotos ändern</button></div>
+    <p class="hint small">UrlaubsCast ${esc(S.version || '')} · Fotos und Videos bleiben auf dem Handy – der Fernseher holt sie direkt über dein WLAN.</p>`);
+  setRange($('setIv'), s.interval);
+  $('setIv').oninput = e => { setRange(e.target, +e.target.value); $('setIvLbl').textContent = e.target.value + ' s' };
+  $('setIv').onchange = e => saveSetting({interval:+e.target.value});
+  $('setLoop').onchange = e => saveSetting({loop:e.target.checked});
+  $('setScreen').onchange = e => saveSetting({screenOn:e.target.checked});
+  $('setQ').onclick = e => { const b = e.target.closest('button'); if (!b) return; $('setQ').querySelectorAll('button').forEach(x => x.classList.toggle('on', x === b)); saveSetting({uhd:b.dataset.q === '1'}) };
+  $('setPerm').onclick = () => { closeModal(); setTab('gal'); S.perm = 'none'; loadMedia(true) };
+}
+
+/* ---------- Tabs ---------- */
+function setTab(t) {
+  S.tab = t;
+  for (const id of ['gal', 'show', 'lists']) $('tab-' + id).hidden = id !== t;
+  document.querySelectorAll('.nav button').forEach(b => b.classList.toggle('on', b.dataset.tab === t));
+  if (t !== 'gal' && S.selMode) exitSel();
+  renderMini();
+}
+
+/* ---------- Start ---------- */
+function bind() {
+  $('logo').innerHTML = ic('cast');
+  $('bMirror').innerHTML = ic('mirror'); $('bSettings').innerHTML = ic('sliders'); $('bCast').innerHTML = ic('cast');
+  $('bRefresh').innerHTML = ic('refresh');
+  $('cPrev').innerHTML = ic('prev'); $('cNext').innerHTML = ic('next'); $('cStop').innerHTML = ic('stop'); $('cPlay').innerHTML = ic('play');
+  $('lShuffle').innerHTML = ic('shuffle'); $('lSave').innerHTML = ic('save') + 'Speichern'; $('lClear').innerHTML = ic('trash');
+  $('bSaveCur').innerHTML = ic('save') + 'Aktuellen Ablauf speichern';
+  $('mpNext').innerHTML = ic('next'); $('mpStop').innerHTML = ic('stop');
+  $('sX').innerHTML = ic('x');
+  $('sAdd').innerHTML = ic('plus') + 'Zum Ablauf'; $('sNext').innerHTML = ic('listnext') + 'Als Nächstes'; $('sStart').innerHTML = ic('play') + 'Neue Show';
+  const nb = document.querySelectorAll('.nav button');
+  nb[0].innerHTML = ic('grid') + 'Galerie';
+  nb[1].innerHTML = ic('slides') + 'Diashow<span class="badge" hidden></span>';
+  nb[2].innerHTML = ic('library') + 'Abläufe';
+  nb.forEach(b => b.onclick = () => setTab(b.dataset.tab));
+
+  $('bCast').onclick = () => openDevices();
+  $('bMirror').onclick = openMirror;
+  $('bSettings').onclick = openSettings;
+  $('bRefresh').onclick = () => { loadMedia(false, true); toast('Galerie wird neu eingelesen') };
+  $('segType').onclick = e => {
+    const b = e.target.closest('button'); if (!b) return;
+    S.type = b.dataset.t; $('segType').querySelectorAll('button').forEach(x => x.classList.toggle('on', x === b));
+    renderGallery(); $('tab-gal').scrollTop = 0;
+  };
+  $('album').onchange = e => { S.bucket = +e.target.value; renderGallery(); $('tab-gal').scrollTop = 0 };
+  bindGrid();
+
+  // Diashow-Steuerung
+  const run = (a, d) => api(a, d).catch(e => toast(e.message));
+  $('cPlay').onclick = () => { if (S.st.mode === 'idle' && !S.list.length) { toast('Erst Fotos oder Videos zum Ablauf hinzufügen'); setTab('gal'); return }
+    needTv('Nach dem Verbinden startet die Diashow automatisch.'); run('toggle') };
+  $('cPrev').onclick = () => run('prev');
+  $('cNext').onclick = () => run('next');
+  $('cStop').onclick = () => run('stop');
+  $('mpPlay').onclick = () => run('toggle');
+  $('mpNext').onclick = () => run('next');
+  $('mpStop').onclick = () => run('stop');
+  $('mini').onclick = e => { if (!e.target.closest('button')) setTab('show') };
+  $('iv').oninput = e => { setRange(e.target, +e.target.value); $('ivLbl').textContent = e.target.value + ' s' };
+  $('iv').onchange = e => saveSetting({interval:+e.target.value});
+  $('loop').onchange = e => saveSetting({loop:e.target.checked});
+  $('vmax').onchange = e => saveSetting({videoMax:+e.target.value});
+  $('plist').onclick = e => {
+    const row = e.target.closest('.ri'); if (!row) return;
+    const i = +row.dataset.i, b = e.target.closest('button[data-a]');
+    if (b) {
+      if (b.dataset.a === 'up') run('move', {from:i, to:i - 1});
+      else if (b.dataset.a === 'down') run('move', {from:i, to:i + 1});
+      else run('remove', {pos:i});
+      return;
+    }
+    needTv('Nach dem Verbinden erscheint das Foto sofort auf dem Fernseher.');
+    run('jump', {pos:i});
+  };
+  $('lShuffle').onclick = () => run('shuffle').then(() => toast('Reihenfolge gemischt'));
+  $('lSave').onclick = saveDialog; $('bSaveCur').onclick = saveDialog;
+  $('lClear').onclick = () => confirmDlg('Ablauf leeren', 'Alle Einträge aus dem aktuellen Ablauf entfernen? Die Fotos selbst bleiben natürlich in der Galerie.', 'Leeren', () => run('clear'));
+
+  // Auswahlleiste
+  $('sX').onclick = exitSel;
+  $('sAdd').onclick = async () => { const keys = selKeysChrono(); try { const r = await api('add', {keys}); toast(plural(r.added || keys.length, 'Medium', 'Medien') + ' zum Ablauf hinzugefügt'); exitSel() } catch (e) { toast(e.message) } };
+  $('sNext').onclick = async () => { const keys = selKeysChrono(); try { await api('add', {keys, next:true}); toast('Kommt als Nächstes dran'); exitSel() } catch (e) { toast(e.message) } };
+  $('sStart').onclick = async () => {
+    const keys = selKeysChrono();
+    try { await api('setList', {keys, start:true}); exitSel(); setTab('show'); needTv('Nach dem Verbinden startet die Diashow automatisch.') } catch (e) { toast(e.message) }
+  };
+
+  // Abläufe
+  $('shows').onclick = e => {
+    const b = e.target.closest('button[data-a]'); if (!b) return;
+    const s = S.shows[+b.dataset.i]; if (!s) return;
+    if (b.dataset.a === 'del') confirmDlg('Ablauf löschen', `„${s.name}“ löschen?`, 'Löschen', async () => { try { const r = await api('deleteShow', {name:s.name}); S.shows = r.shows; renderShows() } catch (x) { toast(x.message) } });
+    else if (b.dataset.a === 'load') api('loadShow', {name:s.name}).then(() => { toast('„' + s.name + '“ geladen'); setTab('show') }).catch(x => toast(x.message));
+    else api('loadShow', {name:s.name, start:true}).then(() => { setTab('show'); needTv('Nach dem Verbinden startet die Diashow automatisch.') }).catch(x => toast(x.message));
+  };
+
+  // Dialoge
+  $('overlay').onclick = e => { if (e.target === $('overlay')) closeModal() };
+  $('modal').onclick = e => {
+    if (e.target.closest('[data-close]')) { closeModal(); return }
+    const d = e.target.closest('.dev');
+    if (d) { d.dataset.on === '1' && S.st.conn === 'on' ? run('disconnect') : run('connect', {id:d.dataset.id}); return }
+    const m = e.target.closest('[data-mirror]');
+    if (m) { run('mirror', {how:m.dataset.mirror}); closeModal() }
+  };
+
+  // Neue Fotos beim Zurückkehren in die App
+  document.addEventListener('visibilitychange', () => {
+    if (!document.hidden && S.perm !== 'none' && Date.now() - S.lastScan > 60000) loadMedia(false);
+  });
+}
+
+async function init() {
+  bind();
+  try {
+    const r = await api('init');
+    S.set = r.settings || S.set; S.shows = r.shows || []; S.perm = r.perm || 'none'; S.version = r.version || '';
+    setList(r.list || []); setState(r.state || S.st); renderShows(); applySettingsUi();
+  } catch (e) { toast(e.message) }
+  loadMedia(true);
+  if (MOCK) setTimeout(() => toast('Vorschau mit Beispielbildern – einfach ausprobieren'), 600);
+}
+
+/* ======================================================================
+   Vorschau im Browser (ohne App): Beispieldaten, damit man das Design sieht
+   ====================================================================== */
+const Mock = (() => {
+  const T = {};
+  function hash(s) { let h = 7; for (const c of s) h = (h * 31 + c.charCodeAt(0)) >>> 0; return h }
+  function thumb(k) {
+    if (T[k]) return T[k];
+    const h = hash(k), hue = h % 360, sx = 15 + h % 65, sy = 14 + (h >> 3) % 22;
+    const svg = `<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 160 100' preserveAspectRatio='xMidYMid slice'><defs><linearGradient id='g' x1='0' y1='0' x2='0' y2='1'>` +
+      `<stop offset='0' stop-color='hsl(${hue},70%,62%)'/><stop offset='1' stop-color='hsl(${(hue + 40) % 360},70%,86%)'/></linearGradient></defs>` +
+      `<rect width='160' height='100' fill='url(#g)'/><circle cx='${sx * 1.6}' cy='${sy}' r='10' fill='#ffd27a'/>` +
+      `<path d='M0 70 L35 40 L62 60 L95 30 L160 72 L160 100 L0 100Z' fill='hsl(${(hue + 180) % 360},30%,${32 + h % 14}%)'/>` +
+      `<path d='M0 84 L45 64 L85 82 L125 66 L160 86 L160 100 L0 100Z' fill='hsl(${(hue + 200) % 360},35%,${20 + h % 10}%)'/></svg>`;
+    return T[k] = 'data:image/svg+xml;charset=utf-8,' + encodeURIComponent(svg);
+  }
+  const buckets = ['Camera', 'Schottland', 'Lake District', 'WhatsApp Images'];
+  const items = [];
+  const base = Date.UTC(2025, 9, 14, 17, 0) / 1000;
+  let n = 0;
+  for (let day = 0; day < 6; day++) for (let j = 0; j < 7 + (day * 5) % 9; j++) {
+    const v = (n % 7 === 3);
+    items.push([(v ? 'v' : 'i') + (1000 + n), v ? 1 : 0, base - day * 86400 - j * 1700, v ? 18 + n % 50 : 0, day < 2 ? 1 : day < 4 ? 2 : (n % 5 === 0 ? 3 : 0)]);
+    n++;
+  }
+  const byKey = new Map(items.map(x => [x[0], x]));
+  const ui = x => ({k:x[0], v:!!x[1], d:x[2], du:x[3], n:x[0] + (x[1] ? '.mp4' : '.jpg'), b:buckets[x[4]]});
+  const st = {mode:'idle', paused:false, index:-1, count:0, cur:null, msg:null, prog:0, conn:'off', dev:null, singlePos:-1, singleCount:0, finished:false};
+  let list = [], set = {interval:8, loop:true, videoMax:0, uhd:false, screenOn:true}, ctx = [], timer = 0, elapsed = 0;
+  const shows = [{name:'Schottland Tag 1', created:Date.now() - 86400000, count:24, videos:3, videoSecs:95, thumbs:['i1003', 'i1005', 'i1008', 'i1010']},
+                 {name:'Lake District', created:Date.now() - 3 * 86400000, count:41, videos:5, videoSecs:180, thumbs:['i1020', 'i1022', 'i1025', 'i1027']}];
+  const push = () => { st.count = list.length; setState(JSON.parse(JSON.stringify(st))) };
+  const pushList = () => setList(list.slice());
+  function tick() {
+    clearInterval(timer); elapsed = 0;
+    if (st.mode !== 'show') return;
+    timer = setInterval(() => {
+      if (st.paused) return; elapsed += 250;
+      const tot = (st.cur && st.cur.v ? st.cur.du : set.interval) * 1000;
+      st.prog = Math.min(1, elapsed / tot); setProg(st.prog);
+      if (elapsed >= tot) adv();
+    }, 250);
+  }
+  function show(i) { st.index = i; st.cur = list[i]; st.prog = 0; st.paused = false; push(); tick() }
+  function adv() { if (!list.length) return; let i = st.index + 1; if (i >= list.length) i = 0; show(i) }
+  async function api(a, d) {
+    await new Promise(r => setTimeout(r, 30));
+    switch (a) {
+      case 'init': return {settings:set, state:st, list, shows, perm:'full', version:'Vorschau'};
+      case 'askPerm': case 'perm': return {perm:'full'};
+      case 'media': return {buckets, items};
+      case 'devices':
+        if (d.on) setTimeout(() => { S.devs = [{id:'1', name:'waipu.tv Stick', desc:'Wohnzimmer', on:st.conn === 'on'}, {id:'2', name:'Schlafzimmer TV', desc:'', on:false}]; renderDevices() }, 600);
+        return {ok:true};
+      case 'connect': st.conn = 'connecting'; st.dev = 'waipu.tv Stick'; push();
+        setTimeout(() => { st.conn = 'on'; S.devs = S.devs.map(x => ({...x, on:x.id === d.id})); push(); renderDevices() }, 800); return {ok:true};
+      case 'disconnect': st.conn = 'off'; st.dev = null; S.devs = S.devs.map(x => ({...x, on:false})); push(); renderDevices(); return {ok:true};
+      case 'single': ctx = d.ctx; st.mode = 'single'; st.cur = ui(byKey.get(d.key)); st.singleCount = ctx.length; st.singlePos = ctx.indexOf(d.key); st.index = list.findIndex(x => x.k === d.key); push(); return {ok:true};
+      case 'toggle': if (st.mode === 'show') { st.paused = !st.paused; push() } else if (list.length) { st.mode = 'show'; show(Math.max(0, st.index)) } return {ok:true};
+      case 'next': if (st.mode === 'show') adv(); return {ok:true};
+      case 'prev': if (st.mode === 'show') show(Math.max(0, st.index - 1)); return {ok:true};
+      case 'stop': clearInterval(timer); Object.assign(st, {mode:'idle', cur:null, prog:0, paused:false}); push(); return {ok:true};
+      case 'jump': if (st.mode === 'show') show(d.pos); else { st.mode = 'single'; st.cur = list[d.pos]; st.index = d.pos; push() } return {ok:true};
+      case 'add': { const add = d.keys.map(k => ui(byKey.get(k))).filter(x => !list.some(y => y.k === x.k)); list = d.next ? [...list.slice(0, st.index + 1), ...add, ...list.slice(st.index + 1)] : [...list, ...add]; pushList(); push(); return {ok:true, added:add.length} }
+      case 'setList': list = d.keys.map(k => ui(byKey.get(k))); pushList(); if (d.start) { st.mode = 'show'; show(0) } else push(); return {ok:true};
+      case 'remove': list.splice(d.pos, 1); pushList(); push(); return {ok:true};
+      case 'move': { const [x] = list.splice(d.from, 1); list.splice(d.to, 0, x); pushList(); return {ok:true} }
+      case 'clear': list = []; pushList(); push(); return {ok:true};
+      case 'shuffle': list.sort(() => Math.random() - .5); pushList(); return {ok:true};
+      case 'saveShow': shows.unshift({name:d.name, created:Date.now(), count:list.length, videos:list.filter(x => x.v).length, videoSecs:0, thumbs:list.slice(0, 4).map(x => x.k)}); return {shows};
+      case 'loadShow': list = items.slice(0, 12).map(ui); pushList(); if (d.start) { st.mode = 'show'; show(0) } return {ok:true};
+      case 'deleteShow': return {shows:shows.splice(shows.findIndex(s => s.name === d.name), 1) && shows};
+      case 'settings': Object.assign(set, d.patch); return {settings:set};
+      case 'mirror': toast(d.how === 'home' ? 'In der App öffnet sich jetzt Google Home' : 'In der App öffnet sich jetzt „Übertragen“'); return {ok:true};
+      default: return {ok:true};
+    }
+  }
+  return {api, thumb};
+})();
+
+init();
+</script>
+</body>
+</html>

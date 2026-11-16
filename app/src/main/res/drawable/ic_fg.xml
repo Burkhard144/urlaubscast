@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="utf-8"?>
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:aapt="http://schemas.android.com/aapt"
+    android:width="108dp" android:height="108dp" android:viewportWidth="108" android:viewportHeight="108">
+    <!-- Schatten unter dem Fernseher -->
+    <path android:fillColor="#4D04163F"
+        android:pathData="M34,41h40a6,6 0 0 1 6,6v24a6,6 0 0 1 -6,6h-40a6,6 0 0 1 -6,-6v-24a6,6 0 0 1 6,-6z" />
+    <!-- Fernseher (Glas-Weiß) -->
+    <path android:pathData="M34,36h40a6,6 0 0 1 6,6v24a6,6 0 0 1 -6,6h-40a6,6 0 0 1 -6,-6v-24a6,6 0 0 1 6,-6z">
+        <aapt:attr name="android:fillColor">
+            <gradient android:type="linear" android:startX="54" android:startY="36" android:endX="54" android:endY="72">
+                <item android:offset="0" android:color="#FFFFFFFF" />
+                <item android:offset="1" android:color="#FFD3E2FF" />
+            </gradient>
+        </aapt:attr>
+    </path>
+    <!-- Bildschirm mit Urlaubsfoto: Himmel -->
+    <path android:pathData="M35,41h38a2,2 0 0 1 2,2v21a2,2 0 0 1 -2,2h-38a2,2 0 0 1 -2,-2v-21a2,2 0 0 1 2,-2z">
+        <aapt:attr name="android:fillColor">
+            <gradient android:type="linear" android:startX="54" android:startY="41" android:endX="54" android:endY="66">
+                <item android:offset="0" android:color="#FF7CC4FF" />
+                <item android:offset="1" android:color="#FFBFE3FF" />
+            </gradient>
+        </aapt:attr>
+    </path>
+    <!-- Sonne -->
+    <path android:pathData="M61,48a4,4 0 1,0 8,0a4,4 0 1,0 -8,0z">
+        <aapt:attr name="android:fillColor">
+            <gradient android:type="linear" android:startX="65" android:startY="44" android:endX="65" android:endY="52">
+                <item android:offset="0" android:color="#FFFFD27A" />
+                <item android:offset="1" android:color="#FFFF8A2A" />
+            </gradient>
+        </aapt:attr>
+    </path>
+    <!-- Berge -->
+    <path android:fillColor="#FF2F6FD6" android:pathData="M33,64L45,50L53,58L58,53L75,64v0a2,2 0 0 1 -2,2h-38a2,2 0 0 1 -2,-2z" />
+    <path android:fillColor="#FF1B4FB3" android:pathData="M33,64L41,57L47,62L52,58L60,66h-25a2,2 0 0 1 -2,-2z" />
+    <!-- Standfuß -->
+    <path android:fillColor="#FFE7F0FF" android:pathData="M48,72h12l2,5h-16z" />
+    <!-- Lichtkante oben -->
+    <path android:strokeColor="#CCFFFFFF" android:strokeWidth="1.2" android:fillColor="#00000000" android:strokeLineCap="round"
+        android:pathData="M35,36.8h38" />
+    <!-- Cast-Wellen (orange Akzent wie im Mail-Symbol) -->
+    <path android:strokeColor="#FFFFFFFF" android:strokeWidth="2.6"
+        android:pathData="M70,30a8,8 0 1,0 16,0a8,8 0 1,0 -16,0z">
+        <aapt:attr name="android:fillColor">
+            <gradient android:type="linear" android:startX="78" android:startY="22" android:endX="78" android:endY="38">
+                <item android:offset="0" android:color="#FFFFC766" />
+                <item android:offset="1" android:color="#FFFF7A1A" />
+            </gradient>
+        </aapt:attr>
+    </path>
+    <path android:strokeColor="#FFFFFFFF" android:strokeWidth="1.8" android:fillColor="#00000000" android:strokeLineCap="round"
+        android:pathData="M74.5,34.5a3.5,3.5 0 0 1 3.5,-3.5" />
+    <path android:strokeColor="#FFFFFFFF" android:strokeWidth="1.8" android:fillColor="#00000000" android:strokeLineCap="round"
+        android:pathData="M74.5,30.5a7,7 0 0 1 7,-7" />
+</vector>
