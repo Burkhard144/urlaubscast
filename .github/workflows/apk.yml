@@ -41,6 +41,13 @@ jobs:
         with:
           tag_name: v1.0.${{ github.run_number }}
           name: UrlaubsCast 1.0.${{ github.run_number }}
-          body: "UrlaubsCast für Android – zum Installieren die APK unten herunterladen."
+          body: |
+            📲 **[APK direkt herunterladen](https://github.com/${{ github.repository }}/releases/download/v1.0.${{ github.run_number }}/UrlaubsCast-1.0.${{ github.run_number }}.apk)**
+
+            **Installieren:** Link auf dem Handy/Tablet öffnen → heruntergeladene Datei antippen → „Installieren“ bzw. „Aktualisieren“. Beim ersten Mal „Unbekannte Apps installieren“ für Browser bzw. Mail-App erlauben.
+
+            Änderung: ${{ github.event.head_commit.message || 'manuell gestartet' }}
+
+            Immer die neueste Version: https://github.com/${{ github.repository }}/releases/latest
           files: out/*.apk
           make_latest: true
